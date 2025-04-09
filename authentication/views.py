@@ -3,6 +3,9 @@ from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.models import User
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
+from mealcalorie_app.models import MealEntry
+from django.utils.timezone import now
+from django.db import models
 
 def register(request):
     if request.method == "POST":
@@ -56,7 +59,18 @@ def login_view(request):
 
 @login_required
 def dashboard(request):
-    return render(request, "authentication/dashboard.html")
+    # Get the current date
+    today = now().date()
+
+    # Calculate total calories for the logged-in user for today
+    total_calories_today = MealEntry.objects.filter(
+        user=request.user,
+        date_time__date=today
+    ).aggregate(total_calories=models.Sum('total_calories'))['total_calories'] or 0
+
+    return render(request, 'authentication/dashboard.html', {
+        'total_calories_today': total_calories_today,
+    })
 
 def logout_view(request):
     logout(request)

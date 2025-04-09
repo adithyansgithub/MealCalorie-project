@@ -7,6 +7,10 @@
     <h2 class="text-center my-4">Welcome to Meal Calories Counter WebApp Dashboard</h2>
     <div class="text-center my-4">
         <a href="{% url 'add_meal' %}" class="btn btn-primary">Add Meal</a>
+        <a href="{% url 'records' %}" class="btn btn-secondary">View Records</a> <!-- New Button -->
+    </div>
+    <div class="text-center my-4">
+        <h4>Total Calories for Today: <span class="text-success">{{ total_calories_today }} cal</span></h4>
     </div>
 </div>
 {% endblock %}

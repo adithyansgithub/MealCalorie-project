@@ -3,6 +3,7 @@ from .forms import MealEntryForm
 from .models import FoodItem
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
+from mealcalorie_app.models import MealEntry
 
 @login_required
 def add_meal(request):
@@ -34,4 +35,21 @@ def add_meal(request):
     return render(request, 'mealcalorie_app/add_meal.html', {
         'form': form,
         'categories': categories,
+    })
+
+@login_required
+def records(request):
+    # Fetch all meal records for the logged-in user, grouped by date
+    records = MealEntry.objects.filter(user=request.user).order_by('-date_time')
+
+    # Group records by date
+    grouped_records = {}
+    for record in records:
+        record_date = record.date_time.date()
+        if record_date not in grouped_records:
+            grouped_records[record_date] = []
+        grouped_records[record_date].append(record)
+
+    return render(request, 'mealcalorie_app/records.html', {  # Updated path
+        'grouped_records': grouped_records,
     })

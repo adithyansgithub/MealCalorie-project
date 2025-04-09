@@ -1,0 +1,44 @@
+{% extends 'base.html' %}
+
+{% block title %}Records - Meal Calories Counter WebApp{% endblock %}
+
+{% block content %}
+<div class="container">
+    <h2 class="text-center my-4">Meal Records</h2>
+    {% if grouped_records %}
+        {% for date, records in grouped_records.items %}
+            <div class="card mb-4">
+                <div class="card-header bg-primary text-white">
+                    <h5>{{ date }}</h5>
+                </div>
+                <div class="card-body">
+                    <table class="table table-striped">
+                        <thead>
+                            <tr>
+                                <th>Food Item</th>
+                                <th>Quantity</th>
+                                <th>Quantity Type</th>
+                                <th>Total Calories</th>
+                                <th>Time</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for record in records %}
+                                <tr>
+                                    <td>{{ record.food_item.name }}</td>
+                                    <td>{{ record.quantity }}</td>
+                                    <td>{{ record.quantity_type }}</td>
+                                    <td>{{ record.total_calories }} cal</td>
+                                    <td>{{ record.date_time|time:"H:i" }}</td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        {% endfor %}
+    {% else %}
+        <p class="text-center">No records found.</p>
+    {% endif %}
+</div>
+{% endblock %}
