@@ -5,6 +5,9 @@ from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from mealcalorie_app.models import MealEntry
 from .forms import FoodItemForm
+from django.shortcuts import get_object_or_404
+from django.http import HttpResponseRedirect
+from django.urls import reverse
 
 @login_required
 def add_meal(request):
@@ -55,8 +58,6 @@ def records(request):
         'grouped_records': grouped_records,
     })
 
-from django.contrib import messages
-
 @login_required
 def add_food_item(request):
     if request.method == 'POST':
@@ -69,3 +70,10 @@ def add_food_item(request):
         form = FoodItemForm()
 
     return render(request, 'mealcalorie_app/add_food_item.html', {'form': form})
+
+@login_required
+def delete_record(request, record_id):
+    record = get_object_or_404(MealEntry, id=record_id, user=request.user)
+    record.delete()
+    messages.success(request, "The record has been successfully deleted!")  # Add success message
+    return redirect('records')  
