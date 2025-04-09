@@ -62,16 +62,30 @@ def dashboard(request):
     # Get the current date
     today = now().date()
 
-    # Calculate total calories for the logged-in user for today
+    # Calculate total calories for today
     total_calories_today = MealEntry.objects.filter(
         user=request.user,
         date_time__date=today
     ).aggregate(total_calories=models.Sum('total_calories'))['total_calories'] or 0
 
+    # Get the daily calorie goal from the session (default to 2000)
+    daily_calorie_goal = request.session.get('daily_calorie_goal', 2000)
+    calories_remaining = daily_calorie_goal - total_calories_today
+
     return render(request, 'authentication/dashboard.html', {
         'total_calories_today': total_calories_today,
+        'total_meals_today': MealEntry.objects.filter(user=request.user, date_time__date=today).count(),
+        'calories_remaining': calories_remaining,
+        'year': now().year,
     })
 
 def logout_view(request):
     logout(request)
     return redirect("login")
+
+@login_required
+def set_calorie_goal(request):
+    if request.method == 'POST':
+        daily_goal = int(request.POST.get('daily_goal', 2000))  # Default to 2000 if not provided
+        request.session['daily_calorie_goal'] = daily_goal  # Save the goal in the session
+        return redirect('dashboard')  # Redirect back to the dashboard
