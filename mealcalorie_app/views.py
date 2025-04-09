@@ -4,6 +4,7 @@ from .models import FoodItem
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from mealcalorie_app.models import MealEntry
+from .forms import FoodItemForm
 
 @login_required
 def add_meal(request):
@@ -53,3 +54,18 @@ def records(request):
     return render(request, 'mealcalorie_app/records.html', {  # Updated path
         'grouped_records': grouped_records,
     })
+
+from django.contrib import messages
+
+@login_required
+def add_food_item(request):
+    if request.method == 'POST':
+        form = FoodItemForm(request.POST)
+        if form.is_valid():
+            form.save()
+            messages.success(request, "Food item added successfully!")  # Add success message
+            return redirect('add_food_item')  # Redirect to the same page after saving
+    else:
+        form = FoodItemForm()
+
+    return render(request, 'mealcalorie_app/add_food_item.html', {'form': form})

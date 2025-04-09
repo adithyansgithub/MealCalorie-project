@@ -32,3 +32,13 @@ class MealEntryForm(forms.ModelForm):
                 self.fields['food_item'].queryset = FoodItem.objects.filter(category=category)
             except (ValueError, TypeError):
                 pass  # Invalid input; fallback to empty queryset
+
+class FoodItemForm(forms.ModelForm):
+    class Meta:
+        model = FoodItem
+        fields = ['name', 'category', 'calories_per_unit']
+        widgets = {
+            'name': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Enter food name'}),
+            'category': forms.Select(attrs={'class': 'form-select'}),
+            'calories_per_unit': forms.NumberInput(attrs={'class': 'form-control', 'placeholder': 'Enter calories per unit'}),
+        }

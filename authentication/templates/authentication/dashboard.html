@@ -57,6 +57,9 @@
                         <a class="nav-link" href="{% url 'records' %}">View Records</a>
                     </li>
                     <li class="nav-item">
+                        <a class="nav-link" href="{% url 'add_food_item' %}">Add Food Item</a>
+                    </li>
+                    <li class="nav-item">
                         <!-- Logout Button -->
                         <form method="post" action="{% url 'logout' %}" class="d-inline">
                             {% csrf_token %}
@@ -112,14 +115,19 @@
 
         <!-- Actions Section -->
         <div class="row text-center">
-            <div class="col-md-6 mb-4">
+            <div class="col-md-4 mb-4">
                 <a href="{% url 'add_meal' %}" class="btn btn-lg btn-custom w-100 shadow-sm">
                     <i class="bi bi-plus-circle"></i> Add Meal
                 </a>
             </div>
-            <div class="col-md-6 mb-4">
+            <div class="col-md-4 mb-4">
                 <a href="{% url 'records' %}" class="btn btn-lg btn-secondary w-100 shadow-sm">
                     <i class="bi bi-journal-text"></i> View Records
+                </a>
+            </div>
+            <div class="col-md-4 mb-4">
+                <a href="{% url 'add_food_item' %}" class="btn btn-lg btn-success w-100 shadow-sm">
+                    <i class="bi bi-plus-square"></i> Add Food Item
                 </a>
             </div>
         </div>
