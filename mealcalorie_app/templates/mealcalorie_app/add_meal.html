@@ -22,7 +22,14 @@
                         <a class="nav-link active" href="{% url 'add_meal' %}">Add Meal</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="{% url 'logout' %}">Logout</a>
+                        <a class="nav-link" href="{% url 'records' %}">View Records</a> <!-- New Link -->
+                    </li>
+                    <li class="nav-item">
+                        <!-- Logout Button -->
+                        <form method="post" action="{% url 'logout' %}" class="d-inline">
+                            {% csrf_token %}
+                            <button type="submit" class="btn btn-danger btn-sm">Logout</button>
+                        </form>
                     </li>
                 </ul>
             </div>
