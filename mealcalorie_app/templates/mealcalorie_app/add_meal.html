@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Add Meal</title>
+    <!-- Add Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="#">Meal Calorie Counter</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'dashboard' %}">Dashboard</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link active" href="{% url 'add_meal' %}">Add Meal</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'logout' %}">Logout</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+    <div class="container mt-3">
+        {% if messages %}
+            {% for message in messages %}
+                <div class="alert {% if message.tags %}alert-{{ message.tags }}{% else %}alert-info{% endif %} alert-dismissible fade show" role="alert">
+                    {{ message }}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+            {% endfor %}
+        {% endif %}
+    </div>
+
+    <!-- Main Content -->
+    <div class="container mt-5">
+        <h1 class="text-center mb-4">Add Meal</h1>
+        <div class="card shadow p-4">
+            <form method="post">
+                {% csrf_token %}
+                <input type="hidden" name="category" value="{{ request.GET.category }}">
+                <div class="mb-3">
+                    <label for="category" class="form-label">Category:</label>
+                    <select id="category" name="category" class="form-select" onchange="filterFoodItems(this.value)">
+                        <option value="">Select Category</option>
+                        {% for key, value in categories %}
+                            <option value="{{ key }}" {% if key == request.GET.category %}selected{% endif %}>{{ value }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="mb-3">
+                    <label for="id_food_item" class="form-label">Food Item:</label>
+                    <select id="id_food_item" name="food_item" class="form-select">
+                        <option value="">Select Food Item</option>
+                        {% for item in form.fields.food_item.queryset %}
+                            <option value="{{ item.id }}" data-calories="{{ item.calories_per_unit }}">{{ item.name }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="mb-3">
+                    {{ form.quantity.label_tag }}
+                    {{ form.quantity }}
+                </div>
+                <div class="mb-3">
+                    {{ form.quantity_type.label_tag }}
+                    {{ form.quantity_type }}
+                </div>
+                <div class="mb-3">
+                    {{ form.date_time.label_tag }}
+                    {{ form.date_time }}
+                </div>
+                <div class="mb-3">
+                    <label for="total_calories" class="form-label">Total Calories:</label>
+                    <input type="text" id="total_calories" name="total_calories" class="form-control" value="{{ total_calories }}" readonly>
+                </div>
+                <button type="submit" class="btn btn-primary w-100">Save Meal</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Add Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        function filterFoodItems(category) {
+            const url = new URL(window.location.href);
+            url.searchParams.set('category', category);
+            window.location.href = url.toString();
+        }
+        document.addEventListener('DOMContentLoaded', function () {
+        const foodItemField = document.getElementById('id_food_item');
+        const quantityField = document.getElementById('id_quantity');
+        const totalCaloriesField = document.getElementById('total_calories');
+
+        function updateTotalCalories() {
+            const selectedFoodItem = foodItemField.options[foodItemField.selectedIndex];
+            const caloriesPerUnit = selectedFoodItem.getAttribute('data-calories');
+            const quantity = parseFloat(quantityField.value) || 0;
+
+            if (caloriesPerUnit) {
+                const totalCalories = caloriesPerUnit * quantity;
+                totalCaloriesField.value = totalCalories.toFixed(2);
+            } else {
+                totalCaloriesField.value = '';
+            }
+        }
+
+        // Attach event listeners
+        foodItemField.addEventListener('change', updateTotalCalories);
+        quantityField.addEventListener('input', updateTotalCalories);
+    });
+    // Automatically dismiss success messages after 3 seconds
+    document.addEventListener('DOMContentLoaded', function () {
+        const alertElements = document.querySelectorAll('.alert');
+        alertElements.forEach(function (alert) {
+            if (alert.classList.contains('alert-success')) {
+                setTimeout(function () {
+                    alert.classList.add('fade');
+                    alert.addEventListener('transitionend', function () {
+                        alert.remove();
+                    });
+                }, 3000); // 3 seconds
+            }
+        });
+    });
+    </script>
+</body>
+</html>
