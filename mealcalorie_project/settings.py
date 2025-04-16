@@ -9,7 +9,7 @@ https://docs.djangoproject.com/en/5.1/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/5.1/ref/settings/
 """
-
+import os
 from pathlib import Path
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -79,11 +79,11 @@ WSGI_APPLICATION = 'mealcalorie_project.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'mealcalorie_db',
-        'USER': 'mealcalorie_user',
-        'PASSWORD': 'mealcaloriepass',
-        'HOST': 'localhost',
-        'PORT': '5432',
+        'NAME': os.getenv('DB_NAME', 'mealcalorie_db'),  # Database name
+        'USER': os.getenv('DB_USER', 'mealcalorie_user'),  # PostgreSQL username
+        'PASSWORD': os.getenv('DB_PASSWORD', 'mealcaloriepass'),  # Password for the database user
+        'HOST': os.getenv('DB_HOST', 'localhost'),  # Hostname
+        'PORT': os.getenv('DB_PORT', '5432'),  # Port where PostgreSQL is running
     }
 }
 
